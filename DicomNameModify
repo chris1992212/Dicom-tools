@@ -1,0 +1,41 @@
+"""
+This script is used to modify the name of dicom file.
+Created by chenmingliang in 2020.12.16
+"""
+import os
+import shutil
+
+class DicomNameModify(object):
+
+    def __init__(self, folder):
+        self.folder = folder
+
+    def get_files_name(self, file):
+        file_tmp = file.split(".")
+        file_name = file_tmp[-3]
+        return file_name
+
+    def replace_name(self, file, file_name):
+        file_tmp = file.split(".")
+        file_tmp[-3] = file_name
+        file_new = '.'.join(file_tmp)
+        return file_new
+
+    def modify(self):
+
+        for root, dirs, files in os.walk(self.folder):
+            if len(files) > 0:
+                if os.path.splitext(files[0])[-1] == '.dcm':
+                    file_name = self.get_files_name(files[0])
+                    for file in files:
+                        if os.path.splitext(file)[-1] == '.dcm':
+                            file_name2 = self.get_files_name(file)
+                            if file_name2 != file_name:
+                                new_file = self.replace_name(file, file_name)
+                                new_file = os.path.join(root, new_file)
+                                src_file = os.path.join(root, file)
+                                os.rename(src_file, new_file)
+
+if __name__ == '__main__':
+    tool = DicomNameModify('F:\AI_Projects\CT_artifacts\\train\Aliasing_artifacts')
+    tool.modify()
